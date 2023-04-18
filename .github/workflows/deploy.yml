@@ -50,6 +50,15 @@ jobs:
           sudo npm install -g pm2
           cd /home/$USER/telegram-bot
           npm install
+          ssh -i private_key.pem $USER@$HOST <<'ENDSSH'
+          echo "TELEGRAM_GROUP_ID=$TELEGRAM_GROUP_ID" >> .env
+          echo "BOT_NAME=$BOT_NAME" >> .env
+          echo "BOT_TOKEN=$BOT_TOKEN" >> .env
+          echo "OPEN_AI_TOKEN=$OPEN_AI_TOKEN" >> .env
+          echo "OPEN_AI_BASE_URL=$OPEN_AI_BASE_URL" >> .env
+          echo "BOT_DOMAIN=$BOT_DOMAIN" >> .env
+          echo "BOT_PORT=$BOT_PORT" >> .env
+          mv .env /home/$USER/telegram-bot/
           pm2 start index.js --name telegram-bot
           pm2 save
           sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u $USER --hp /home/$USER
