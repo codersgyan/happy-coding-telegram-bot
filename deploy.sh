@@ -12,5 +12,4 @@ sudo rm -rf node_modules
 sudo npm install
 
 echo "Run new PM2 action"
-sudo cp /home/ubuntu/ecosystem.json ecosystem.json
-sudo pm2 start ecosystem.json
+sudo pm2 start --name happy-coding-telegram-bot index.js
