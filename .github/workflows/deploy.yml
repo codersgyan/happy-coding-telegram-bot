@@ -37,7 +37,8 @@ jobs:
       run: |
         echo "$PRIVATE_KEY" > private_key.pem
         chmod 400 private_key.pem
-        echo "Adding EC2 host key to known hosts"
+        echo "Disabling strict host key checking"
+        echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
         scp -i private_key.pem -r . $USER@$HOST:/home/$USER/telegram-bot
         ssh -i private_key.pem $USER@$HOST <<'ENDSSH'
           sudo apt update
