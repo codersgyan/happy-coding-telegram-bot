@@ -35,10 +35,11 @@ jobs:
         BOT_PORT: ${{ secrets.BOT_PORT }}
 
       run: |
-        echo "$PRIVATE_KEY" > nginx-crash-course.pem
-        chmod 600 nginx-crash-course.pem
-        scp -i nginx-crash-course.pem -r . $USER@$HOST:/home/$USER/telegram-bot
-        ssh -i nginx-crash-course.pem $USER@$HOST <<'ENDSSH'
+        echo "$PRIVATE_KEY" > private_key.pem
+        chmod 400 private_key.pem
+        echo "Adding EC2 host key to known hosts"
+        scp -i private_key.pem -r . $USER@$HOST:/home/$USER/telegram-bot
+        ssh -i private_key.pem $USER@$HOST <<'ENDSSH'
           sudo apt update
           sudo apt install -y nginx
           curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
