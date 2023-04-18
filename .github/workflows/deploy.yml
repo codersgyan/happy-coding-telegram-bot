@@ -19,13 +19,6 @@ jobs:
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           envs: TELEGRAM_GROUP_ID,BOT_NAME,BOT_TOKEN,OPEN_AI_TOKEN,OPEN_AI_BASE_URL,BOT_DOMAIN,BOT_PORT
           script: |
-            export TELEGRAM_GROUP_ID=${{ secrets.TELEGRAM_GROUP_ID }}
-            export BOT_NAME=${{ secrets.BOT_NAME }}
-            export BOT_TOKEN=${{ secrets.BOT_TOKEN}}
-            export OPEN_AI_TOKEN=${{ secrets.OPEN_AI_TOKEN }}
-            export OPEN_AI_BASE_URL=${{ secrets.OPEN_AI_BASE_URL }}
-            export BOT_DOMAIN=${{ secrets.BOT_DOMAIN }}
-            export BOT_PORT=${{ secrets.BOT_PORT }}
             cd telegram-bot
             pwd
             sh deploy.sh
