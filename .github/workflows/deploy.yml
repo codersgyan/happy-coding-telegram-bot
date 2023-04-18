@@ -19,5 +19,5 @@ jobs:
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           envs: TELEGRAM_GROUP_ID,BOT_NAME,BOT_TOKEN,OPEN_AI_TOKEN,OPEN_AI_BASE_URL,BOT_DOMAIN,BOT_PORT
           script: |
-            ls
+            cd telegram-bot
             sh deploy.sh
