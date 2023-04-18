@@ -1,4 +1,4 @@
-name: Deploy Telegram Bot to AWS EC2
+name: Deploying
 
 on:
   push:
@@ -7,66 +7,15 @@ on:
 
 jobs:
   deploy:
+    name: Deploy
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16
-
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Deploy to AWS EC2
-      env:
-        PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-        HOST: ${{ secrets.EC2_HOST }}
-        USER: ${{ secrets.EC2_USER }}
-        TELEGRAM_GROUP_ID: ${{ secrets.TELEGRAM_GROUP_ID }}
-        BOT_NAME: ${{ secrets.BOT_NAME }}
-        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-        OPEN_AI_TOKEN: ${{ secrets.OPEN_AI_TOKEN }}
-        OPEN_AI_BASE_URL: ${{ secrets.OPEN_AI_BASE_URL }}
-        BOT_DOMAIN: ${{ secrets.BOT_DOMAIN }}
-        BOT_PORT: ${{ secrets.BOT_PORT }}
-
-      run: |
-        echo "$PRIVATE_KEY" > private_key.pem
-        chmod 400 private_key.pem
-        echo "Disabling strict host key checking"
-        mkdir -p ~/.ssh
-        echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-        ssh -i private_key.pem $USER@$HOST "mkdir -p /home/$USER/telegram-bot"
-        scp -i private_key.pem -r * $USER@$HOST:/home/$USER/telegram-bot
-        ssh -i private_key.pem $USER@$HOST <<'ENDSSH'
-          sudo apt update
-          sudo apt install -y nginx
-          curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-          sudo apt-get install -y nodejs
-          sudo npm install -g pm2
-          cd /home/$USER/telegram-bot
-          npm install
-          ssh -i private_key.pem $USER@$HOST <<'ENDSSH'
-          echo "TELEGRAM_GROUP_ID=$TELEGRAM_GROUP_ID" >> .env
-          echo "BOT_NAME=$BOT_NAME" >> .env
-          echo "BOT_TOKEN=$BOT_TOKEN" >> .env
-          echo "OPEN_AI_TOKEN=$OPEN_AI_TOKEN" >> .env
-          echo "OPEN_AI_BASE_URL=$OPEN_AI_BASE_URL" >> .env
-          echo "BOT_DOMAIN=$BOT_DOMAIN" >> .env
-          echo "BOT_PORT=$BOT_PORT" >> .env
-          mv .env /home/$USER/telegram-bot/
-          pm2 start index.js --name telegram-bot
-          pm2 save
-          sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u $USER --hp /home/$USER
-          sudo systemctl enable pm2-$USER
-          sudo cp nginx-config.conf /etc/nginx/sites-available/telegram-bot
-          sudo ln -s /etc/nginx/sites-available/telegram-bot /etc/nginx/sites-enabled/
-          sudo systemctl restart nginx
-        ENDSSH
-        rm -f private_key.pem
-
-
+      - name: executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          envs: TELEGRAM_GROUP_ID,BOT_NAME,BOT_TOKEN,OPEN_AI_TOKEN,OPEN_AI_BASE_URL,BOT_DOMAIN,BOT_PORT
+          script: sh deploy.sh
