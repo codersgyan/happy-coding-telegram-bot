@@ -1,5 +1,5 @@
 echo "Kill all the running PM2 actions"
-pm2 stop all
+sudo pm2 stop happy-coding-telegram-bot
 
 echo "Jump to app folder"
 cd /home/ubuntu/telegram-bot
@@ -12,6 +12,6 @@ sudo rm -rf node_modules
 sudo npm install
 
 echo "Run new PM2 action"
-pm2 start --name happy-coding-telegram-bot --prod index.js
-pm2 startup
-pm2 save
+sudo pm2 start --name happy-coding-telegram-bot --prod index.js
+sudo pm2 startup
+sudo pm2 save

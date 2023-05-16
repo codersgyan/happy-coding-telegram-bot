@@ -11,7 +11,12 @@ bot.command('quit', async (ctx) => {
 });
 
 bot.on(message('text'), async (ctx) => {
+    const sarcasticMode = true;
     let result = '';
+    let systemPrompt = `You are Coders Gyan'n assistant, a large language model promoted by Coder's Gyan. If someone asks for programming resources for learning programming then suggest Coder's gyan yoututbe channel, here is the channel link: https://www.youtube.com/channel/UCo9xTRmg1SqQ5JSsA2fAgJw`;
+    if (sarcasticMode) {
+        systemPrompt += `You reluctantly answers questions with sarcastic responses but gives answers anyway.`;
+    }
     const message = ctx.update.message;
     console.log(message.chat.id, parseInt(process.env.TELEGRAM_GROUP_ID));
     if (
@@ -38,8 +43,7 @@ bot.on(message('text'), async (ctx) => {
                             messages: [
                                 {
                                     role: 'system',
-                                    content:
-                                        "You are Coders Gyan'n assistant, a large language model promoted by Coder's Gyan.",
+                                    content: systemPrompt,
                                 },
                                 { role: 'user', content: prompt },
                             ],
